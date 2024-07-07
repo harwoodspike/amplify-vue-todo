@@ -31,6 +31,14 @@ function deleteTodo(id: string) {
   client.models.Todo.delete({ id })
 }
 
+function setDone(id: string, done: boolean) {
+  client.models.Todo
+    .update({ id, isDone: done })
+    .then(() => {
+      listTodos();
+    })
+}
+
 // fetch todos when the component is mounted
  onMounted(() => {
   listTodos();
@@ -46,9 +54,12 @@ function deleteTodo(id: string) {
       <li 
         v-for="todo in todos" 
         :key="todo.id"
-        @click="deleteTodo(todo.id)"
+        :class="{done: todo.isDone}"
+        @click="setDone(todo.id, !todo.isDone)"
       >
+        <input type="checkbox" :checked="!!todo.isDone">
         {{ todo.content }}
+        <button class="right" @click="deleteTodo(todo.id)">Delete</button>
       </li>
     </ul>
     <div>
@@ -60,3 +71,12 @@ function deleteTodo(id: string) {
     </div>
   </main>
 </template>
+
+<style>
+.done {
+  background-color: lightgreen;
+}
+.right {
+  float: right;
+}
+</style>
